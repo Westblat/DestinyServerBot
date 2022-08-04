@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from credentials import destiny, joukkue_chat_id, joukkue
+from credentials import destiny, chat_id, joukkue_chat_id, joukkue
 
 shit = discord.Client()
 client = commands.Bot(command_prefix="!")
@@ -13,7 +13,7 @@ emojis_and_ranks = {"🐒": "Hunter", "👑": "Titan", "🧙": "Warlock"}
 @client.event
 async def on_ready():
     # 351285503116443668
-    channel = await client.fetch_channel(joukkue_chat_id)
+    channel = await client.fetch_channel(chat_id)
     # Create new message and save it to the global variable
     new_message = await channel.send("Add one of the reactions to get yourself a main class role. If you want to get rid of one of the roles, just add the reaction again. \n🐒 = Hunter \n👑 Titan \n🧙Warlock")
     global message
