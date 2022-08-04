@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from credentials import destiny, chat_id
+from credentials import destiny, joukkue_chat_id, joukkue
 
 shit = discord.Client()
 client = commands.Bot(command_prefix="!")
@@ -13,8 +13,9 @@ emojis_and_ranks = {"🐒": "Hunter", "👑": "Titan", "🧙": "Warlock"}
 @client.event
 async def on_ready():
     # 351285503116443668
-    channel = await client.fetch_channel(chat_id)
-    new_message = await channel.send("Emote here to get role")
+    channel = await client.fetch_channel(joukkue_chat_id)
+    # Create new message and save it to the global variable
+    new_message = await channel.send("Add one of the reactions to get yourself a main class role. If you want to get rid of one of the roles, just add the reaction again. \n🐒 = Hunter \n👑 Titan \n🧙Warlock")
     global message
     message = new_message
     global emojis
@@ -29,14 +30,27 @@ async def on_raw_reaction_add(context):
     global emojis_and_ranks
     user = context.member
     if context.message_id == message.id and not user.bot:
-        name = emojis_and_ranks[context.emoji.name]
-        role = discord.utils.get(user.guild.roles, name=name)
-        if role in user.roles:
-            await user.remove_roles(role)
-        else:
-            await user.add_roles(role)
-        await message.remove_reaction(context.emoji, user)
+        try:
+            # Add correct role based on emoji when user reacts to the correct message
+            name = emojis_and_ranks[context.emoji.name]
+            role = discord.utils.get(user.guild.roles, name=name)
+            if role in user.roles:
+                # If there is role already, remove old
+                await user.remove_roles(role)
+            else:
+                # If no role, add the role
+                await user.add_roles(role)
+            await message.remove_reaction(context.emoji, user)
+        except KeyError:
+            # If someone adds stupid emojis, remove them
+            await message.remove_reaction(context.emoji, user)
 
 
-# client.run("") Joukkue
+@client.event
+async def on_message(context):
+    if context.channel.id == int(joukkue_chat_id) and not context.author.bot:
+        # Someone posts stupid shit, we delete it
+        await context.delete()
+
+# client.run("joukkue") Joukkue
 client.run(destiny)
