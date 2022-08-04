@@ -48,7 +48,7 @@ async def on_raw_reaction_add(context):
 
 @client.event
 async def on_message(context):
-    if context.channel.id == int(joukkue_chat_id) and not context.author.bot:
+    if context.channel.id == int(chat_id) and not context.author.bot:
         # Someone posts stupid shit, we delete it
         await context.delete()
 
